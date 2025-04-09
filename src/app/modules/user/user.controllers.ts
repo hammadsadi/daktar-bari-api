@@ -7,9 +7,20 @@ import { UserServices } from "./user.services";
  * @Return Data
  */
 const createAdmin = async (req: Request, res: Response) => {
-  // console.log(req.body);
-  const result = await UserServices.adminSaveToDB(req.body);
-  res.send(result);
+  try {
+    const result = await UserServices.adminSaveToDB(req.body);
+    res.status(200).json({
+      success: true,
+      message: "Admin Created Successful",
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error?.name || "Something Went Wrong",
+      Error: error,
+    });
+  }
 };
 
 export const UserCOntrollers = {
