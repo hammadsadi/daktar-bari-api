@@ -1,7 +1,8 @@
 // Admin Save to DB
-const adminSaveToDB = async () => {
+const adminSaveToDB = async (data: any) => {
+  console.log(data);
   return {
-    message: "Admin Saved Successful!",
+    data,
   };
 };
 

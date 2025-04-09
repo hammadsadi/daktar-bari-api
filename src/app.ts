@@ -4,8 +4,13 @@ import { UserRoutes } from "./app/modules/user/user.routes";
 
 // Init Express
 const app: Application = express();
+
 // Cors Init
 app.use(cors());
+
+// Parser
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Api Check Route
 app.get("/", (req: Request, res: Response) => {

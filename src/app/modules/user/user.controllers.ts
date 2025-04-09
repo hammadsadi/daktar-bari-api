@@ -7,7 +7,8 @@ import { UserServices } from "./user.services";
  * @Return Data
  */
 const createAdmin = async (req: Request, res: Response) => {
-  const result = await UserServices.adminSaveToDB();
+  // console.log(req.body);
+  const result = await UserServices.adminSaveToDB(req.body);
   res.send(result);
 };
 
