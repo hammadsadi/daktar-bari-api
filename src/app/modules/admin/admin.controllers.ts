@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
-import { UserServices } from "./user.services";
+import { AdminServices } from "./admin.services";
 
 /**
- * @Method POST
- * @Dsc Admin Create
+ * @Method GET
+ * @Dsc GET ALL ADMINS
  * @Return Data
  */
-const createAdmin = async (req: Request, res: Response) => {
+const getAllAdmin = async (req: Request, res: Response) => {
   try {
-    const result = await UserServices.adminSaveToDB(req.body);
+    const result = await AdminServices.getAllAdminFromDB(req.query);
     res.status(200).json({
       success: true,
-      message: "Admin Created Successful",
+      message: "Admin Retrieved Successful",
       data: result,
     });
   } catch (error) {
@@ -23,6 +23,6 @@ const createAdmin = async (req: Request, res: Response) => {
   }
 };
 
-export const UserControllers = {
-  createAdmin,
+export const AdminControllers = {
+  getAllAdmin,
 };
