@@ -1,14 +1,19 @@
 import { Request, Response } from "express";
 import { AdminServices } from "./admin.services";
+import pick from "../../utils/pick";
+import { validateQueryData } from "./admin.constant";
 
 /**
  * @Method GET
  * @Dsc GET ALL ADMINS
  * @Return Data
  */
+
 const getAllAdmin = async (req: Request, res: Response) => {
+  // Select Valid Key and Value
+  const filter = pick(req.query, validateQueryData);
   try {
-    const result = await AdminServices.getAllAdminFromDB(req.query);
+    const result = await AdminServices.getAllAdminFromDB(filter);
     res.status(200).json({
       success: true,
       message: "Admin Retrieved Successful",
