@@ -4,6 +4,9 @@ import { Prisma, PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const getAllAdminFromDB = async (query: any) => {
+  // All Query Data
+  const { searchTerm, ...filteredData } = query;
+
   //  Admin SearchTerm data
   const andCondition: Prisma.AdminWhereInput[] = [];
 
@@ -22,6 +25,14 @@ const getAllAdminFromDB = async (query: any) => {
     });
   }
 
+  // Filter Data
+  if (Object.keys(filteredData)?.length > 0) {
+    andCondition.push({
+      AND: Object.keys(filteredData)?.map((key) => ({
+        [key]: filteredData[key],
+      })),
+    });
+  }
   // Make Object Data  Using ANT Operator
   const whereCondition: Prisma.AdminWhereInput = { AND: andCondition };
 
