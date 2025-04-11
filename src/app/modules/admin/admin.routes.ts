@@ -12,5 +12,8 @@ adminRouter.get("/:adminId", AdminControllers.getSingleAdmin);
 // Update Single Admin Data
 adminRouter.patch("/:adminId", AdminControllers.updateAdminData);
 
+// Delete Single Admin Data
+adminRouter.delete("/:adminId", AdminControllers.deleteAdminData);
+
 // Export Routes
 export const AdminRoutes = adminRouter;

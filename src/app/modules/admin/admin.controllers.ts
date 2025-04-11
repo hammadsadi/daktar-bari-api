@@ -82,8 +82,35 @@ const updateAdminData = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * @Method DELETE
+ * @Dsc DELETE Single ADMIN Data
+ * @Params adminId
+ * @Return Data
+ */
+
+const deleteAdminData = async (req: Request, res: Response) => {
+  // Get Id From Params
+  const { adminId } = req.params;
+  try {
+    const resData = await AdminServices.deleteSingleAdmin(adminId);
+    res.status(200).json({
+      success: true,
+      message: "Admin Data Deleted Successful",
+      data: resData,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error?.name || "Something Went Wrong",
+      Error: error,
+    });
+  }
+};
+
 export const AdminControllers = {
   getAllAdmin,
   getSingleAdmin,
   updateAdminData,
+  deleteAdminData,
 };
