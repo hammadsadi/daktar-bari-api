@@ -40,7 +40,6 @@ const getAllAdmin = async (req: Request, res: Response) => {
 const getSingleAdmin = async (req: Request, res: Response) => {
   // Get Id From Params
   const { adminId } = req.params;
-  console.log(adminId);
   try {
     const resData = await AdminServices.findSingleAdminFromDB(adminId);
     res.status(200).json({
@@ -56,7 +55,35 @@ const getSingleAdmin = async (req: Request, res: Response) => {
     });
   }
 };
+
+/**
+ * @Method PATCH
+ * @Dsc Update Single ADMIN Data
+ * @Params adminId
+ * @Return Data
+ */
+
+const updateAdminData = async (req: Request, res: Response) => {
+  // Get Id From Params
+  const { adminId } = req.params;
+  try {
+    const resData = await AdminServices.adminDataUpdate(adminId, req.body);
+    res.status(200).json({
+      success: true,
+      message: "Admin Data Updated Successful",
+      data: resData,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error?.name || "Something Went Wrong",
+      Error: error,
+    });
+  }
+};
+
 export const AdminControllers = {
   getAllAdmin,
   getSingleAdmin,
+  updateAdminData,
 };
