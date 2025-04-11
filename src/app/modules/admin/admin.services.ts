@@ -4,9 +4,34 @@ import { adminSearchAbleFields } from "./admin.constant";
 // Init Prisma Client Constructor
 const prisma = new PrismaClient();
 
-const getAllAdminFromDB = async (query: any) => {
+// Calculate Pagination
+const calculatePagination = (options: {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: string;
+}) => {
+  const page: number = Number(options?.page) || 1;
+  const limit: number = Number(options.limit) || 10;
+  const skip: number = (Number(page) - 1) * limit;
+  const sortBy: string = options?.sortBy || "createdAt";
+  const sortOrder: string = options?.sortOrder || "desc";
+
+  return {
+    page,
+    limit,
+    skip,
+    sortBy,
+    sortOrder,
+  };
+};
+
+const getAllAdminFromDB = async (query: any, options: any) => {
   // All Query Data
   const { searchTerm, ...filteredData } = query;
+
+  // Pagination Data
+  const { page, limit, skip } = calculatePagination(options);
 
   //  Admin SearchTerm data
   const andCondition: Prisma.AdminWhereInput[] = [];
@@ -38,6 +63,16 @@ const getAllAdminFromDB = async (query: any) => {
   const result = await prisma.admin.findMany({
     // Search Admin By Name or Email
     where: whereCondition,
+    skip,
+    take: limit,
+    orderBy:
+      options?.sortBy && options?.sortOrder
+        ? {
+            [options?.sortBy]: options?.sortOrder,
+          }
+        : {
+            createdAt: "asc",
+          },
   });
   return result;
 };

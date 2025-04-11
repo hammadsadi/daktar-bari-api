@@ -12,8 +12,9 @@ import { validateQueryData } from "./admin.constant";
 const getAllAdmin = async (req: Request, res: Response) => {
   // Select Valid Key and Value
   const filter = pick(req.query, validateQueryData);
+  const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
   try {
-    const result = await AdminServices.getAllAdminFromDB(filter);
+    const result = await AdminServices.getAllAdminFromDB(filter, options);
     res.status(200).json({
       success: true,
       message: "Admin Retrieved Successful",
