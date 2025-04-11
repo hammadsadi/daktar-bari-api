@@ -30,6 +30,33 @@ const getAllAdmin = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * @Method GET
+ * @Dsc GET Single ADMIN
+ * @Params adminId
+ * @Return Data
+ */
+
+const getSingleAdmin = async (req: Request, res: Response) => {
+  // Get Id From Params
+  const { adminId } = req.params;
+  console.log(adminId);
+  try {
+    const resData = await AdminServices.findSingleAdminFromDB(adminId);
+    res.status(200).json({
+      success: true,
+      message: "Admin Retrieved Successful",
+      data: resData,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error?.name || "Something Went Wrong",
+      Error: error,
+    });
+  }
+};
 export const AdminControllers = {
   getAllAdmin,
+  getSingleAdmin,
 };
