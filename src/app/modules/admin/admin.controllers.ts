@@ -14,11 +14,12 @@ const getAllAdmin = async (req: Request, res: Response) => {
   const filter = pick(req.query, validateQueryData);
   const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
   try {
-    const result = await AdminServices.getAllAdminFromDB(filter, options);
+    const resData = await AdminServices.getAllAdminFromDB(filter, options);
     res.status(200).json({
       success: true,
       message: "Admin Retrieved Successful",
-      data: result,
+      metaData: resData.meta,
+      data: resData.result,
     });
   } catch (error) {
     res.status(400).json({
