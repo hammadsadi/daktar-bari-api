@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AdminServices } from "./admin.services";
 import pick from "../../utils/pick";
 import { validateQueryData } from "./admin.constant";
+import sendResponse from "../../shared/SendResponse";
 
 /**
  * @Method GET
@@ -15,13 +16,14 @@ const getAllAdmin = async (req: Request, res: Response) => {
   const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
   try {
     const resData = await AdminServices.getAllAdminFromDB(filter, options);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin Retrieved Successful",
-      metaData: resData.meta,
+      meta: resData.meta,
       data: resData.result,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(400).json({
       success: false,
       message: error?.name || "Something Went Wrong",
@@ -42,12 +44,13 @@ const getSingleAdmin = async (req: Request, res: Response) => {
   const { adminId } = req.params;
   try {
     const resData = await AdminServices.findSingleAdminFromDB(adminId);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin Retrieved Successful",
       data: resData,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(400).json({
       success: false,
       message: error?.name || "Something Went Wrong",
@@ -68,12 +71,13 @@ const updateAdminData = async (req: Request, res: Response) => {
   const { adminId } = req.params;
   try {
     const resData = await AdminServices.adminDataUpdate(adminId, req.body);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin Data Updated Successful",
       data: resData,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(400).json({
       success: false,
       message: error?.name || "Something Went Wrong",
@@ -94,12 +98,13 @@ const deleteAdminData = async (req: Request, res: Response) => {
   const { adminId } = req.params;
   try {
     const resData = await AdminServices.deleteSingleAdmin(adminId);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin Data Deleted Successful",
       data: resData,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(400).json({
       success: false,
       message: error?.name || "Something Went Wrong",
@@ -120,12 +125,13 @@ const softDeleteAdminData = async (req: Request, res: Response) => {
   const { adminId } = req.params;
   try {
     const resData = await AdminServices.softDeleteSingleAdminFromDB(adminId);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: 200,
       success: true,
       message: "Admin Data Deleted Successful",
       data: resData,
     });
-  } catch (error) {
+  } catch (error: any) {
     res.status(400).json({
       success: false,
       message: error?.name || "Something Went Wrong",
