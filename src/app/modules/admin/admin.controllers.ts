@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { AdminServices } from "./admin.services";
 import pick from "../../utils/pick";
 import { validateQueryData } from "./admin.constant";
@@ -11,7 +11,7 @@ import status from "http-status";
  * @Return Data
  */
 
-const getAllAdmin = async (req: Request, res: Response) => {
+const getAllAdmin = async (req: Request, res: Response, next: NextFunction) => {
   // Select Valid Key and Value
   const filter = pick(req.query, validateQueryData);
   const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
@@ -25,11 +25,7 @@ const getAllAdmin = async (req: Request, res: Response) => {
       data: resData.result,
     });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error?.name || "Something Went Wrong",
-      Error: error,
-    });
+    next(error);
   }
 };
 
@@ -40,7 +36,11 @@ const getAllAdmin = async (req: Request, res: Response) => {
  * @Return Data
  */
 
-const getSingleAdmin = async (req: Request, res: Response) => {
+const getSingleAdmin = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // Get Id From Params
   const { adminId } = req.params;
   try {
@@ -52,11 +52,7 @@ const getSingleAdmin = async (req: Request, res: Response) => {
       data: resData,
     });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error?.name || "Something Went Wrong",
-      Error: error,
-    });
+    next(error);
   }
 };
 
@@ -67,7 +63,11 @@ const getSingleAdmin = async (req: Request, res: Response) => {
  * @Return Data
  */
 
-const updateAdminData = async (req: Request, res: Response) => {
+const updateAdminData = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // Get Id From Params
   const { adminId } = req.params;
   try {
@@ -79,11 +79,7 @@ const updateAdminData = async (req: Request, res: Response) => {
       data: resData,
     });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error?.name || "Something Went Wrong",
-      Error: error,
-    });
+    next(error);
   }
 };
 
@@ -94,7 +90,11 @@ const updateAdminData = async (req: Request, res: Response) => {
  * @Return Data
  */
 
-const deleteAdminData = async (req: Request, res: Response) => {
+const deleteAdminData = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // Get Id From Params
   const { adminId } = req.params;
   try {
@@ -106,11 +106,7 @@ const deleteAdminData = async (req: Request, res: Response) => {
       data: resData,
     });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error?.name || "Something Went Wrong",
-      Error: error,
-    });
+    next(error);
   }
 };
 
@@ -121,7 +117,11 @@ const deleteAdminData = async (req: Request, res: Response) => {
  * @Return Data
  */
 
-const softDeleteAdminData = async (req: Request, res: Response) => {
+const softDeleteAdminData = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   // Get Id From Params
   const { adminId } = req.params;
   try {
@@ -133,11 +133,7 @@ const softDeleteAdminData = async (req: Request, res: Response) => {
       data: resData,
     });
   } catch (error: any) {
-    res.status(400).json({
-      success: false,
-      message: error?.name || "Something Went Wrong",
-      Error: error,
-    });
+    next(error);
   }
 };
 
