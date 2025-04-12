@@ -15,5 +15,8 @@ adminRouter.patch("/:adminId", AdminControllers.updateAdminData);
 // Delete Single Admin Data
 adminRouter.delete("/:adminId", AdminControllers.deleteAdminData);
 
+// Soft Delete Single Admin Data
+adminRouter.delete("/soft/:adminId", AdminControllers.softDeleteAdminData);
+
 // Export Routes
 export const AdminRoutes = adminRouter;
