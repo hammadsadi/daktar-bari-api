@@ -25,6 +25,11 @@ const getAllAdminFromDB = async (query: any, options: any) => {
     });
   }
 
+  // Push Active Data Condition
+  andCondition.push({
+    isDeleted: false,
+  });
+
   // Filter Data
   if (Object.keys(filteredData)?.length > 0) {
     andCondition.push({
@@ -33,6 +38,7 @@ const getAllAdminFromDB = async (query: any, options: any) => {
       })),
     });
   }
+
   // Make Object Data  Using ANT Operator
   const whereCondition: Prisma.AdminWhereInput = { AND: andCondition };
 
@@ -67,11 +73,12 @@ const getAllAdminFromDB = async (query: any, options: any) => {
 };
 
 // Find Single Admin From DB
-const findSingleAdminFromDB = async (id: string) => {
+const findSingleAdminFromDB = async (id: string): Promise<Admin | null> => {
   // Get Data From DB
   const result = await prisma.admin.findUnique({
     where: {
       id,
+      isDeleted: false,
     },
   });
 
@@ -79,11 +86,15 @@ const findSingleAdminFromDB = async (id: string) => {
 };
 
 // Admin Data Update
-const adminDataUpdate = async (id: string, data: Partial<Admin>) => {
+const adminDataUpdate = async (
+  id: string,
+  data: Partial<Admin>
+): Promise<Admin> => {
   //  Check Exist Data
   await prisma.admin.findUniqueOrThrow({
     where: {
       id,
+      isDeleted: false,
     },
   });
   // Update Data
@@ -98,7 +109,7 @@ const adminDataUpdate = async (id: string, data: Partial<Admin>) => {
 };
 
 //  Delete Single Admin and User Relation Data Using Transaction
-const deleteSingleAdmin = async (id: string) => {
+const deleteSingleAdmin = async (id: string): Promise<Admin> => {
   // Check Data IsExist or Not
   await prisma.admin.findUniqueOrThrow({
     where: {
@@ -128,11 +139,12 @@ const deleteSingleAdmin = async (id: string) => {
 };
 
 //  Soft Delete Single Admin and User Relation Data Using Transaction
-const softDeleteSingleAdminFromDB = async (id: string) => {
+const softDeleteSingleAdminFromDB = async (id: string): Promise<Admin> => {
   // Check Data IsExist or Not
   await prisma.admin.findUniqueOrThrow({
     where: {
       id,
+      isDeleted: false,
     },
   });
 
