@@ -3,6 +3,7 @@ import { AdminServices } from "./admin.services";
 import pick from "../../utils/pick";
 import { validateQueryData } from "./admin.constant";
 import sendResponse from "../../shared/SendResponse";
+import status from "http-status";
 
 /**
  * @Method GET
@@ -17,7 +18,7 @@ const getAllAdmin = async (req: Request, res: Response) => {
   try {
     const resData = await AdminServices.getAllAdminFromDB(filter, options);
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: status.OK,
       success: true,
       message: "Admin Retrieved Successful",
       meta: resData.meta,
@@ -45,7 +46,7 @@ const getSingleAdmin = async (req: Request, res: Response) => {
   try {
     const resData = await AdminServices.findSingleAdminFromDB(adminId);
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: status.OK,
       success: true,
       message: "Admin Retrieved Successful",
       data: resData,
@@ -72,7 +73,7 @@ const updateAdminData = async (req: Request, res: Response) => {
   try {
     const resData = await AdminServices.adminDataUpdate(adminId, req.body);
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: status.OK,
       success: true,
       message: "Admin Data Updated Successful",
       data: resData,
@@ -99,7 +100,7 @@ const deleteAdminData = async (req: Request, res: Response) => {
   try {
     const resData = await AdminServices.deleteSingleAdmin(adminId);
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: status.OK,
       success: true,
       message: "Admin Data Deleted Successful",
       data: resData,
@@ -126,7 +127,7 @@ const softDeleteAdminData = async (req: Request, res: Response) => {
   try {
     const resData = await AdminServices.softDeleteSingleAdminFromDB(adminId);
     sendResponse(res, {
-      statusCode: 200,
+      statusCode: status.OK,
       success: true,
       message: "Admin Data Deleted Successful",
       data: resData,
