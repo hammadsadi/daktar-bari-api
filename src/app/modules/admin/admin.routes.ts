@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { AdminControllers } from "./admin.controllers";
+import validatedRequest from "../../shared/validatedRequest";
+import { AdminValidation } from "./admin.validation";
 
 // Init Route
 const adminRouter = Router();
@@ -10,7 +12,11 @@ adminRouter.get("/", AdminControllers.getAllAdmin);
 adminRouter.get("/:adminId", AdminControllers.getSingleAdmin);
 
 // Update Single Admin Data
-adminRouter.patch("/:adminId", AdminControllers.updateAdminData);
+adminRouter.patch(
+  "/:adminId",
+  validatedRequest(AdminValidation.adminValidationSchema),
+  AdminControllers.updateAdminData
+);
 
 // Delete Single Admin Data
 adminRouter.delete("/:adminId", AdminControllers.deleteAdminData);
