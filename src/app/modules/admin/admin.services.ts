@@ -2,8 +2,14 @@ import { Admin, Prisma, UserStatus } from "@prisma/client";
 import { adminSearchAbleFields } from "./admin.constant";
 import prisma from "../../shared/prisma";
 import { PaginationHelper } from "../../utils/paginationHelper";
+import { IPaginationOptions } from "../../interfaces/paginationOptions";
+import { TAdminQuery } from "./admin.types";
 
-const getAllAdminFromDB = async (query: any, options: any) => {
+const getAllAdminFromDB = async (
+  query: TAdminQuery,
+  options: IPaginationOptions
+) => {
+  console.log(query);
   // All Query Data
   const { searchTerm, ...filteredData } = query;
 
@@ -34,7 +40,9 @@ const getAllAdminFromDB = async (query: any, options: any) => {
   if (Object.keys(filteredData)?.length > 0) {
     andCondition.push({
       AND: Object.keys(filteredData)?.map((key) => ({
-        [key]: filteredData[key],
+        [key]: {
+          equals: (filteredData as any)[key],
+        },
       })),
     });
   }
