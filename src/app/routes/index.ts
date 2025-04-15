@@ -4,7 +4,7 @@ import { AdminRoutes } from "../modules/admin/admin.routes";
 import { AuthRoutes } from "../modules/auth/auth.routes";
 
 const router = Router();
-
+// Module Routes Info
 const moduleRoutes = [
   {
     path: "/user",
