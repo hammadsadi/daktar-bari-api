@@ -1,4 +1,4 @@
-import jwt, { SignOptions } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret, SignOptions } from "jsonwebtoken";
 // Create Token Generate Reuseable Function
 const generateToken = (payload: any, secret: string, expiresIn: string) => {
   // Generate Access Token
@@ -9,6 +9,10 @@ const generateToken = (payload: any, secret: string, expiresIn: string) => {
   return token;
 };
 
+const tokenVerify = (token: string, secret: Secret) => {
+  return jwt.verify(token, "sadihammadsadi") as JwtPayload;
+};
 export const JWTHelper = {
   generateToken,
+  tokenVerify,
 };
