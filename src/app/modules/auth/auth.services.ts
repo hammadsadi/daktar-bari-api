@@ -65,7 +65,7 @@ const createRefreshToken = async (token: string) => {
     },
   });
 
-  // Generate Access Token
+  // Generate Access Token after Verifying The Refresh Token
   const accessToken = JWTHelper.generateToken(
     {
       email: authData?.email,
