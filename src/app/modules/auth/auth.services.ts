@@ -47,6 +47,12 @@ const authLogin = async (payload: { email: string; password: string }) => {
   };
 };
 
+// Create Refresh Token
+const createRefreshToken = async (token: string) => {
+  console.log(token);
+};
+
 export const AuthServices = {
   authLogin,
+  createRefreshToken
 };

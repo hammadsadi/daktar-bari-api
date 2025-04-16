@@ -3,7 +3,7 @@ import cors from "cors";
 import router from "./app/routes";
 import globalErrorHandler from "./app/middlewares/globalErrorHandlers";
 import apiNotFound from "./app/middlewares/apiNotFound";
-
+import cookieParser from "cookie-parser";
 // Init Express
 const app: Application = express();
 
@@ -14,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Cors Init
 app.use(cors());
+app.use(cookieParser());
 
 // Api Check Route
 app.get("/", (req: Request, res: Response) => {

@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { AUthControllers } from "./auth.controllers";
+import { AuthControllers } from "./auth.controllers";
 
 const authRoute = Router();
 
 // Auth Login
-authRoute.post("/login", AUthControllers.loginAuth);
+authRoute.post("/login", AuthControllers.loginAuth);
+authRoute.get("/refresh-token", AuthControllers.refreshTokenCreate);
 
 export const AuthRoutes = authRoute;
