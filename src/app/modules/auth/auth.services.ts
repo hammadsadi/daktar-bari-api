@@ -57,7 +57,10 @@ const createRefreshToken = async (token: string) => {
   let decoded;
   try {
     // Token Verify
-    decoded = JWTHelper.tokenVerify(token, "sadihammadsadi");
+    decoded = JWTHelper.tokenVerify(
+      token,
+      config.JWT.REFRESH_TOKEN_SECRET as Secret
+    );
   } catch (error) {
     throw new Error("Your are Not Authorized!");
   }
@@ -77,8 +80,8 @@ const createRefreshToken = async (token: string) => {
       role: authData.role,
       status: authData.status,
     },
-    "sadihammad",
-    "1m"
+    config.JWT.JWT_SECRET as string,
+    config.JWT.JWT_EXPIRES_IN as string
   );
 
   return {
@@ -87,7 +90,45 @@ const createRefreshToken = async (token: string) => {
   };
 };
 
+// Change Password
+const userPasswordChange = async (userData: any, payload: any) => {
+  // Get User Data
+  const loggedInUser = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: userData?.email,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  // Match Password
+  const passwordMatch: boolean = await bcrypt.compare(
+    payload?.oldPassword,
+    loggedInUser.password
+  );
+  if (!passwordMatch) {
+    throw new Error("Password does not match!");
+  }
+
+  // Hash Password
+  const hashedPassword = await bcrypt.hash(payload?.newPassword, 12);
+
+  // Update Password
+  await prisma.user.update({
+    where: {
+      email: loggedInUser?.email,
+    },
+    data: {
+      password: hashedPassword,
+      needPasswordChange: false,
+    },
+  });
+  return {
+    message: "Password Changed Successfully",
+  };
+};
+
 export const AuthServices = {
   authLogin,
   createRefreshToken,
+  userPasswordChange,
 };

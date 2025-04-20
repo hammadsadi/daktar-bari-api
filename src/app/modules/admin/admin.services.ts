@@ -9,7 +9,6 @@ const getAllAdminFromDB = async (
   query: TAdminQuery,
   options: IPaginationOptions
 ) => {
-  console.log(query);
   // All Query Data
   const { searchTerm, ...filteredData } = query;
 

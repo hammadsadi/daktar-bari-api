@@ -51,7 +51,26 @@ const refreshTokenCreate = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+/**
+ * @Method POST
+ * @Dsc Change User Password
+ * @Params
+ * @Return Data
+ */
+
+const changeUserPassword = catchAsync(async (req: Request, res: Response) => {
+  const result = await AuthServices.userPasswordChange(req.user, req.body);
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Password Changed Successfully",
+    data: result,
+  });
+});
+
 export const AuthControllers = {
   loginAuth,
   refreshTokenCreate,
+  changeUserPassword,
 };
