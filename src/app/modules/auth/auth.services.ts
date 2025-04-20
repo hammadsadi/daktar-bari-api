@@ -1,8 +1,9 @@
 import prisma from "../../shared/prisma";
 import bcrypt from "bcrypt";
 import { JWTHelper } from "../../utils/jwtHelper";
-import jwt from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
 import { UserStatus } from "@prisma/client";
+import config from "../../config";
 // Auth Login
 const authLogin = async (payload: { email: string; password: string }) => {
   // Get User Data
@@ -29,9 +30,10 @@ const authLogin = async (payload: { email: string; password: string }) => {
       role: authData.role,
       status: authData.status,
     },
-    "sadihammad",
-    "1m"
+    config.JWT.JWT_SECRET as string,
+    config.JWT.JWT_EXPIRES_IN as string
   );
+
   // Generate Refresh Token
 
   const refreshToken = JWTHelper.generateToken(
@@ -40,8 +42,8 @@ const authLogin = async (payload: { email: string; password: string }) => {
       role: authData.role,
       status: authData.status,
     },
-    "sadihammadsadi",
-    "30d"
+    config.JWT.REFRESH_TOKEN_SECRET as string,
+    config.JWT.REFRESH_TOKEN_EXPIRES_IN as string
   );
   return {
     accessToken,

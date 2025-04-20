@@ -1,7 +1,8 @@
 import { Server } from "http";
 import app from "./app";
+import config from "./app/config";
 
-const port = 5000;
+const port = config.PORT || 5050;
 
 // Connection Related Function
 async function main() {

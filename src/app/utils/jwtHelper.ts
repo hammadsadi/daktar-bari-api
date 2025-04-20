@@ -10,7 +10,7 @@ const generateToken = (payload: any, secret: string, expiresIn: string) => {
 };
 
 const tokenVerify = (token: string, secret: Secret) => {
-  return jwt.verify(token, "sadihammadsadi") as JwtPayload;
+  return jwt.verify(token, secret) as JwtPayload;
 };
 export const JWTHelper = {
   generateToken,
