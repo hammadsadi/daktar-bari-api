@@ -7,7 +7,7 @@ import ApiError from "../errors/ApiError";
 import status from "http-status";
 
 const auth = (...roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request & { user?: any }, res: Response, next: NextFunction) => {
     try {
       const token = req.headers.authorization;
 
