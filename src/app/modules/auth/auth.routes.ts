@@ -13,5 +13,5 @@ authRoute.post(
   auth(UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT, UserRole.SUPER_ADMIN),
   AuthControllers.changeUserPassword
 );
-
+authRoute.post("/generate-link", AuthControllers.generatePasswordResetLink);
 export const AuthRoutes = authRoute;
