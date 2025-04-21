@@ -227,9 +227,45 @@ const forgotPasswordGenerate = async (payload: { email: string }) => {
   );
 };
 
+// Password Reset
+const passwordReset = async (
+  token: string,
+  payload: { id: string; password: string }
+) => {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: {
+      id: payload.id,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  // Verify Token
+  const verifyUser = JWTHelper.tokenVerify(
+    token,
+    config.JWT.FORGOT_PASSWORD_TOKEN as string
+  );
+  if (!verifyUser) {
+    throw new ApiError(status.FORBIDDEN, "Forbidden!");
+  }
+  // Hash Password
+  const hashedPassword = await bcrypt.hash(payload?.password, 12);
+  // Update Password
+  const result = await prisma.user.update({
+    where: {
+      id: payload.id,
+    },
+    data: {
+      password: hashedPassword,
+    },
+  });
+
+  return result;
+};
+
 export const AuthServices = {
   authLogin,
   createRefreshToken,
   userPasswordChange,
   forgotPasswordGenerate,
+  passwordReset,
 };

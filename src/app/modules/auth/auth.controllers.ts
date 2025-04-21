@@ -91,9 +91,29 @@ const generatePasswordResetLink = catchAsync(
   }
 );
 
+/**
+ * @Method POST
+ * @Dsc Password Reset
+ * @Params
+ * @Return Data
+ */
+
+const userPasswordReset = catchAsync(async (req: Request, res: Response) => {
+  const token = req.headers.authorization || "";
+  const result = await AuthServices.passwordReset(token, req.body);
+
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Password Reset Successfully",
+    data: result,
+  });
+});
+
 export const AuthControllers = {
   loginAuth,
   refreshTokenCreate,
   changeUserPassword,
   generatePasswordResetLink,
+  userPasswordReset,
 };

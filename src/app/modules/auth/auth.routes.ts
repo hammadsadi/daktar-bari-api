@@ -14,4 +14,5 @@ authRoute.post(
   AuthControllers.changeUserPassword
 );
 authRoute.post("/generate-link", AuthControllers.generatePasswordResetLink);
+authRoute.post("/reset-password", AuthControllers.userPasswordReset);
 export const AuthRoutes = authRoute;
