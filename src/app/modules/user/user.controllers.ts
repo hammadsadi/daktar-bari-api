@@ -1,27 +1,25 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { UserServices } from "./user.services";
+import catchAsync from "../../shared/catchAsync";
+import sendResponse from "../../shared/SendResponse";
+import status from "http-status";
 
 /**
  * @Method POST
  * @Dsc Admin Create
  * @Return Data
  */
-const createAdmin = async (req: Request, res: Response) => {
-  try {
+const createAdmin = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const result = await UserServices.adminSaveToDB(req);
-    res.status(200).json({
+    sendResponse(res, {
+      statusCode: status.OK,
       success: true,
       message: "Admin Created Successful",
       data: result,
     });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error?.name || "Something Went Wrong",
-      Error: error,
-    });
   }
-};
+);
 
 export const UserControllers = {
   createAdmin,

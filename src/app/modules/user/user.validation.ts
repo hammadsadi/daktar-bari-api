@@ -13,3 +13,7 @@ const adminCreateValidation = z.object({
       .regex(/^\d{7,15}$/, "Contact Number must be 7 to 15 digits"),
   }),
 });
+
+export const AdminValidation = {
+  adminCreateValidation,
+};
