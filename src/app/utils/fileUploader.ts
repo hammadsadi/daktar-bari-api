@@ -34,10 +34,9 @@ const upload = multer({ storage: storage });
 const uploadToCloudinary = async (
   file: IFile
 ): Promise<ICloudinaryResponse | undefined> => {
-  console.log(file);
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(
-      "https://res.cloudinary.com/demo/image/upload/getting-started/shoes.jpg",
+      file.path,
       (error: Error, result: ICloudinaryResponse) => {
         fs.unlinkSync(file.path);
         if (error) {

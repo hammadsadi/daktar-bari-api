@@ -44,10 +44,54 @@ model User {
   updatedAt DateTime @updatedAt
   
   admin Admin?
+  doctor Doctor?
+  patient Patient?
 
   @@map("users")
 }
 
+
+// --- Doctor Model ---
+model Doctor {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  profilePhoto String?
+  contactNumber String
+  address String?
+  registrationNumber String
+  experience Int @default(0)
+  gender Gender
+  appointmentFee Int
+  qualification String
+  currentWorkingPlace String
+  designation String
+  isDeleted Boolean @default(false)
+  averageRating Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [email], references: [email])
+}
+
+
+// Patient Model
+model Patient{
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  profilePhoto String?
+  contactNumber String
+  address String?
+  isDeleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [email], references: [email])
+
+  @@map("patients")
+
+}
+
+//  === Enums Here ===
 enum UserRole {
   SUPER_ADMIN
   ADMIN
@@ -59,4 +103,9 @@ enum UserStatus {
   ACTIVE
   BLOCKED
   DELETED
+}
+
+enum Gender {
+  MALE
+ FEMALE
 }
