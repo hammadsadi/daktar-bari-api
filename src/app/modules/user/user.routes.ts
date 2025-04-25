@@ -7,6 +7,9 @@ import { AdminValidation } from "./user.validation";
 // Init Route
 const userRouter = Router();
 
+// Get All Users
+userRouter.get("/", UserControllers.getAllUsers);
+
 // Create Admin
 userRouter.post(
   "/admin",
@@ -36,7 +39,6 @@ userRouter.post(
 // Patient Doctor
 userRouter.post(
   "/patient",
-  auth("ADMIN", "SUPER_ADMIN"),
   fileUploader.upload.single("file"),
   (req: Request, res: Response, next: NextFunction) => {
     req.body = AdminValidation.patientCreateValidation.parse(

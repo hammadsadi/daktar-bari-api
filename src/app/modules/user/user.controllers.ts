@@ -3,6 +3,28 @@ import { UserServices } from "./user.services";
 import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/SendResponse";
 import status from "http-status";
+import pick from "../../utils/pick";
+import { userValidateQueryData } from "./user.constants";
+
+/**
+ * @Method GET
+ * @Dsc GET ALL ADMINS
+ * @Return Data
+ */
+
+const getAllUsers = catchAsync(async (req: Request, res: Response) => {
+  // Select Valid Key and Value
+  const filter = pick(req.query, userValidateQueryData);
+  const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
+  const resData = await UserServices.getAllUsersFromDB(filter, options);
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Users Retrieved Successful",
+    meta: resData.meta,
+    data: resData.result,
+  });
+});
 
 /**
  * @Method POST
@@ -58,4 +80,5 @@ export const UserControllers = {
   createAdmin,
   doctorCreate,
   patientCreate,
+  getAllUsers,
 };

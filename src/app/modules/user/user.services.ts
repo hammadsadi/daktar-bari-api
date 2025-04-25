@@ -1,12 +1,92 @@
-import { UserRole } from "@prisma/client";
+import { Admin, Doctor, Patient, Prisma, UserRole } from "@prisma/client";
 import bcrypt from "bcrypt";
 import prisma from "../../shared/prisma";
 import { fileUploader } from "../../utils/fileUploader";
 import { IFile } from "../../interfaces/file";
+import { Request } from "express";
+import { IPaginationOptions } from "../../interfaces/paginationOptions";
+import { PaginationHelper } from "../../utils/paginationHelper";
+import { UserSearchAbleFields } from "./user.constants";
+
+const getAllUsersFromDB = async (query: any, options: IPaginationOptions) => {
+  // All Query Data
+  const { searchTerm, ...filteredData } = query;
+
+  // Pagination Data
+  const { page, limit, skip } = PaginationHelper.calculatePagination(options);
+
+  //  User SearchTerm data
+  const andCondition: Prisma.UserWhereInput[] = [];
+
+  // Check Query Data
+  if (query?.searchTerm) {
+    andCondition.push({
+      OR: UserSearchAbleFields?.map((field) => ({
+        [field]: {
+          contains: query?.searchTerm,
+          mode: "insensitive",
+        },
+      })),
+    });
+  }
+
+  // Filter Data
+  if (Object.keys(filteredData)?.length > 0) {
+    andCondition.push({
+      AND: Object.keys(filteredData)?.map((key) => ({
+        [key]: {
+          equals: (filteredData as any)[key],
+        },
+      })),
+    });
+  }
+
+  // Make Object Data  Using ANT Operator
+  const whereCondition: Prisma.UserWhereInput =
+    andCondition.length > 0 ? { AND: andCondition } : {};
+
+  // Get User Info
+  const result = await prisma.user.findMany({
+    // Search User By Name or Email
+    where: whereCondition,
+    skip,
+    take: limit,
+    orderBy:
+      options?.sortBy && options?.sortOrder
+        ? {
+            [options?.sortBy]: options?.sortOrder,
+          }
+        : {
+            createdAt: "asc",
+          },
+    select: {
+      id: true,
+      email: true,
+      role: true,
+      needPasswordChange: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  //  Total Data
+  const total = await prisma.user.count({
+    where: whereCondition,
+  });
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    result,
+  };
+};
 
 // Admin Save to DB
-const adminSaveToDB = async (req: any) => {
-  const file: IFile = req.file;
+const adminSaveToDB = async (req: Request): Promise<Admin> => {
+  const file = req.file as IFile;
   if (file) {
     const uploadedImage = await fileUploader.uploadToCloudinary(file);
 
@@ -36,8 +116,8 @@ const adminSaveToDB = async (req: any) => {
 };
 
 // Doctor Save to DB
-const doctorSaveToDB = async (req: any) => {
-  const file: IFile = req.file;
+const doctorSaveToDB = async (req: Request): Promise<Doctor> => {
+  const file = req.file as IFile;
   if (file) {
     const uploadedImage = await fileUploader.uploadToCloudinary(file);
 
@@ -70,8 +150,8 @@ const doctorSaveToDB = async (req: any) => {
 };
 
 // Patient Save to DB
-const patientSaveToDB = async (req: any) => {
-  const file: IFile = req.file;
+const patientSaveToDB = async (req: Request): Promise<Patient> => {
+  const file = req.file as IFile;
   if (file) {
     const uploadedImage = await fileUploader.uploadToCloudinary(file);
 
@@ -107,4 +187,5 @@ export const UserServices = {
   adminSaveToDB,
   doctorSaveToDB,
   patientSaveToDB,
+  getAllUsersFromDB,
 };
