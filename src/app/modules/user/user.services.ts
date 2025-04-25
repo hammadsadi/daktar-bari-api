@@ -7,6 +7,8 @@ import { Request } from "express";
 import { IPaginationOptions } from "../../interfaces/paginationOptions";
 import { PaginationHelper } from "../../utils/paginationHelper";
 import { UserSearchAbleFields } from "./user.constants";
+import ApiError from "../../errors/ApiError";
+import status from "http-status";
 
 const getAllUsersFromDB = async (query: any, options: IPaginationOptions) => {
   // All Query Data
@@ -67,6 +69,10 @@ const getAllUsersFromDB = async (query: any, options: IPaginationOptions) => {
       status: true,
       createdAt: true,
       updatedAt: true,
+      // Relational Data
+      admin: true,
+      doctor: true,
+      patient: true,
     },
   });
 
@@ -183,9 +189,33 @@ const patientSaveToDB = async (req: Request): Promise<Patient> => {
   return result;
 };
 
+//  Update User Status
+const updateUserStatus = async (id: string, payload: UserRole) => {
+  // Find Data
+  const isExistUser = await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+  if (!isExistUser) {
+    throw new ApiError(status.NOT_FOUND, "User Not Found");
+  }
+
+  // Status Update
+  const userStatusUpdated = await prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: payload,
+  });
+
+  return userStatusUpdated;
+};
+
 export const UserServices = {
   adminSaveToDB,
   doctorSaveToDB,
   patientSaveToDB,
   getAllUsersFromDB,
+  updateUserStatus,
 };

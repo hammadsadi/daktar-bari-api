@@ -76,9 +76,29 @@ const patientCreate = catchAsync(
     });
   }
 );
+
+/**
+ * @Method PATCH
+ * @Dsc User Status Update
+ * @Return Data
+ */
+const updateUserStatus = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+    const result = await UserServices.updateUserStatus(id, req.body);
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "User Status Changed!",
+      data: result,
+    });
+  }
+);
+
 export const UserControllers = {
   createAdmin,
   doctorCreate,
   patientCreate,
   getAllUsers,
+  updateUserStatus,
 };

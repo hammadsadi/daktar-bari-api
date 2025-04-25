@@ -3,12 +3,18 @@ import { UserControllers } from "./user.controllers";
 import auth from "../../middlewares/auth";
 import { fileUploader } from "../../utils/fileUploader";
 import { AdminValidation } from "./user.validation";
+import { UserRole } from "@prisma/client";
+import validatedRequest from "../../shared/validatedRequest";
 
 // Init Route
 const userRouter = Router();
 
 // Get All Users
-userRouter.get("/", UserControllers.getAllUsers);
+userRouter.get(
+  "/",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  UserControllers.getAllUsers
+);
 
 // Create Admin
 userRouter.post(
@@ -46,6 +52,14 @@ userRouter.post(
     );
     return UserControllers.patientCreate(req, res, next);
   }
+);
+
+//  Update User Status
+userRouter.patch(
+  "/:id/status",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  validatedRequest(AdminValidation.userStatusUpdateValidation),
+  UserControllers.updateUserStatus
 );
 
 // Export Routes
