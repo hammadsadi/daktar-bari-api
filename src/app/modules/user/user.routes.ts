@@ -16,6 +16,13 @@ userRouter.get(
   UserControllers.getAllUsers
 );
 
+// Get Profile Data
+userRouter.get(
+  "/me",
+  auth(UserRole.ADMIN, UserRole.SUPER_ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+  UserControllers.getProfileData
+);
+
 // Create Admin
 userRouter.post(
   "/admin",
