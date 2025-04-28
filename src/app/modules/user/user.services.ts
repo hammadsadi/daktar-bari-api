@@ -16,6 +16,7 @@ import { PaginationHelper } from "../../utils/paginationHelper";
 import { UserSearchAbleFields } from "./user.constants";
 import ApiError from "../../errors/ApiError";
 import status from "http-status";
+import { TAuthUser } from "../../interfaces/common";
 
 const getAllUsersFromDB = async (query: any, options: IPaginationOptions) => {
   // All Query Data
@@ -220,11 +221,11 @@ const updateUserStatus = async (id: string, payload: UserRole) => {
 };
 
 //  Get My Profile Data
-const getMyProfileData = async (payload: any) => {
+const getMyProfileData = async (payload: TAuthUser) => {
   //  Get User Data
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
-      email: payload.email,
+      email: payload?.email,
       status: UserStatus.ACTIVE,
     },
     select: {
@@ -267,11 +268,11 @@ const getMyProfileData = async (payload: any) => {
 };
 
 //  Update My Profile Data
-const updateMyProfile = async (user: any, req: Request) => {
+const updateMyProfile = async (user: TAuthUser, req: Request) => {
   //  Get User Data
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
-      email: user.email,
+      email: user?.email,
       status: UserStatus.ACTIVE,
     },
   });

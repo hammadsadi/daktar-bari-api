@@ -5,6 +5,7 @@ import sendResponse from "../../shared/SendResponse";
 import status from "http-status";
 import pick from "../../utils/pick";
 import { userValidateQueryData } from "./user.constants";
+import { TAuthUser } from "../../interfaces/common";
 
 /**
  * @Method GET
@@ -101,9 +102,13 @@ const updateUserStatus = catchAsync(
  * @Return Data
  */
 const getProfileData = catchAsync(
-  async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+  async (
+    req: Request & { user?: TAuthUser },
+    res: Response,
+    next: NextFunction
+  ) => {
     const user = req.user;
-    const result = await UserServices.getMyProfileData(user);
+    const result = await UserServices.getMyProfileData(user as TAuthUser);
     sendResponse(res, {
       statusCode: status.OK,
       success: true,
@@ -119,9 +124,13 @@ const getProfileData = catchAsync(
  * @Return Data
  */
 const updateProfileData = catchAsync(
-  async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+  async (
+    req: Request & { user?: TAuthUser },
+    res: Response,
+    next: NextFunction
+  ) => {
     const user = req.user;
-    const result = await UserServices.updateMyProfile(user, req);
+    const result = await UserServices.updateMyProfile(user as TAuthUser, req);
     sendResponse(res, {
       statusCode: status.OK,
       success: true,
