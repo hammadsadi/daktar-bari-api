@@ -113,6 +113,24 @@ const getProfileData = catchAsync(
   }
 );
 
+/**
+ * @Method PATCH
+ * @Dsc Update My Profile Data
+ * @Return Data
+ */
+const updateProfileData = catchAsync(
+  async (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+    const user = req.user;
+    const result = await UserServices.updateMyProfile(user, req);
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "Profile Data Updated Successful!",
+      data: result,
+    });
+  }
+);
+
 export const UserControllers = {
   createAdmin,
   doctorCreate,
@@ -120,4 +138,5 @@ export const UserControllers = {
   getAllUsers,
   updateUserStatus,
   getProfileData,
+  updateProfileData,
 };

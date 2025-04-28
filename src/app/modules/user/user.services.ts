@@ -1,4 +1,11 @@
-import { Admin, Doctor, Patient, Prisma, UserRole } from "@prisma/client";
+import {
+  Admin,
+  Doctor,
+  Patient,
+  Prisma,
+  UserRole,
+  UserStatus,
+} from "@prisma/client";
 import bcrypt from "bcrypt";
 import prisma from "../../shared/prisma";
 import { fileUploader } from "../../utils/fileUploader";
@@ -218,6 +225,7 @@ const getMyProfileData = async (payload: any) => {
   const userInfo = await prisma.user.findUniqueOrThrow({
     where: {
       email: payload.email,
+      status: UserStatus.ACTIVE,
     },
     select: {
       id: true,
@@ -257,6 +265,57 @@ const getMyProfileData = async (payload: any) => {
   }
   return { ...userInfo, ...profileData };
 };
+
+//  Update My Profile Data
+const updateMyProfile = async (user: any, req: Request) => {
+  //  Get User Data
+  const userInfo = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: user.email,
+      status: UserStatus.ACTIVE,
+    },
+  });
+
+  //  File Upload
+  const file = req.file as IFile;
+  if (file) {
+    const fileUploaded = await fileUploader.uploadToCloudinary(file);
+    req.body.profilePhoto = fileUploaded?.secure_url;
+  }
+
+  // Get Profile Related Data
+  let profileData;
+  if (userInfo.role === UserRole.SUPER_ADMIN) {
+    profileData = await prisma.admin.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: req.body,
+    });
+  } else if (userInfo.role === UserRole.ADMIN) {
+    profileData = await prisma.admin.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: req.body,
+    });
+  } else if (userInfo.role === UserRole.DOCTOR) {
+    profileData = await prisma.doctor.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: req.body,
+    });
+  } else if (userInfo.role === UserRole.PATIENT) {
+    profileData = await prisma.patient.update({
+      where: {
+        email: userInfo.email,
+      },
+      data: req.body,
+    });
+  }
+  return profileData;
+};
 export const UserServices = {
   adminSaveToDB,
   doctorSaveToDB,
@@ -264,4 +323,5 @@ export const UserServices = {
   getAllUsersFromDB,
   updateUserStatus,
   getMyProfileData,
+  updateMyProfile,
 };
