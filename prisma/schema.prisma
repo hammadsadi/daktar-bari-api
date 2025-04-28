@@ -71,8 +71,27 @@ model Doctor {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user User @relation(fields: [email], references: [email])
+  doctorSpecialties DoctorSpecialties[]
 }
 
+
+// Specialties Model
+model Specialties{
+  id String @id @default(uuid())
+  title String
+  icon String
+  doctorSpecialties DoctorSpecialties[]
+}
+
+// DoctorSpecialties Model
+model DoctorSpecialties {
+  specialtiesId String
+  doctorId      String
+
+  specialties Specialties @relation(fields: [specialtiesId], references: [id])
+  doctor Doctor @relation(fields: [doctorId], references: [id])
+  @@id([specialtiesId, doctorId])
+}
 
 // Patient Model
 model Patient{
