@@ -1,7 +1,7 @@
 import { Patient, Prisma, UserStatus } from "@prisma/client";
 import { IPaginationOptions } from "../../interfaces/paginationOptions";
 import { PaginationHelper } from "../../utils/paginationHelper";
-import { TPatientQuery } from "./patients.type";
+import { TPatientQuery, TPatientUpdate } from "./patients.type";
 import { patientSearchAbleFields } from "./patient.constants";
 import prisma from "../../shared/prisma";
 
@@ -100,7 +100,7 @@ const findSinglePatientsFromDB = async (
 };
 
 // Hard Delete Single Patient and User Relation Data Using Transaction
-const deleteSinglePatient = async (id: string): Promise<Patient> => {
+const deleteSinglePatient = async (id: string): Promise<Patient | null> => {
   // Check Data IsExist or Not
   await prisma.patient.findUniqueOrThrow({
     where: {
@@ -109,28 +109,44 @@ const deleteSinglePatient = async (id: string): Promise<Patient> => {
   });
 
   const result = await prisma.$transaction(async (transactionClient) => {
-    // Delete Patient
-    const deletePatient = await transactionClient.patient.delete({
+    // Delete Patient Health Data
+    await transactionClient.patientHealthData.delete({
       where: {
-        id,
+        patientId: id,
       },
     });
 
-    // Delete Patient Data From User
-    const deleteUserData = await transactionClient.user.delete({
+    // Delete Patient Report
+    await transactionClient.medicalReport.deleteMany({
       where: {
-        email: deletePatient?.email,
+        patientId: id,
       },
     });
 
-    return deletePatient;
+    // Delete Patient Data
+    const deletedPatientData = await transactionClient.patient.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    //  Deleted Patient Info From User
+    await transactionClient.user.delete({
+      where: {
+        email: deletedPatientData.email,
+      },
+    });
+
+    return deletedPatientData;
   });
 
   return result;
 };
 
 //  Soft Delete Single Patient and User Relation Data Using Transaction
-const softDeleteSinglePatientFromDB = async (id: string): Promise<Patient> => {
+const softDeleteSinglePatientFromDB = async (
+  id: string
+): Promise<Patient | null> => {
   // Check Data IsExist or Not
   await prisma.patient.findUniqueOrThrow({
     where: {
@@ -151,7 +167,7 @@ const softDeleteSinglePatientFromDB = async (id: string): Promise<Patient> => {
     });
 
     // Soft Delete Patient Data From User
-    const softDeleteUserData = await transactionClient.user.update({
+    await transactionClient.user.update({
       where: {
         email: softDeletedPatient?.email,
       },
@@ -167,17 +183,21 @@ const softDeleteSinglePatientFromDB = async (id: string): Promise<Patient> => {
 };
 
 // Update Patient Data
-const updatePatientData = async (id: string, payload: any) => {
+const updatePatientData = async (
+  id: string,
+  payload: Partial<TPatientUpdate>
+): Promise<Patient | undefined | null> => {
   const { medicalReport, patientHealthData, ...patientInfo } = payload;
 
   const patientData = await prisma.patient.findUniqueOrThrow({
     where: {
       id,
+      isDeleted: false,
     },
   });
 
   //  Patient Data Create or Update
-  const result = await prisma.$transaction(async (transactionClient) => {
+  await prisma.$transaction(async (transactionClient) => {
     //  Update Patient Data
     const updatedPatient = await transactionClient.patient.update({
       where: {
