@@ -7,6 +7,7 @@ import { AdminServices } from "../admin/admin.services";
 import { validateQueryData } from "../admin/admin.constant";
 import { DoctorServices } from "./doctor.services";
 import { doctorValidateQueryData } from "./doctor.constant";
+import { TDoctorQuery } from "./doctor.types";
 
 /**
  * @Method GET
@@ -18,7 +19,10 @@ const getAllDoctors = catchAsync(async (req: Request, res: Response) => {
   // Select Valid Key and Value
   const filter = pick(req.query, doctorValidateQueryData);
   const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
-  const resData = await DoctorServices.getAllDoctorFromDB(filter, options);
+  const resData = await DoctorServices.getAllDoctorFromDB(
+    filter as TDoctorQuery,
+    options
+  );
   sendResponse(res, {
     statusCode: status.OK,
     success: true,

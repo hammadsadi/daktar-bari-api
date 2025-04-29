@@ -10,8 +10,7 @@ const getAllDoctorFromDB = async (
   options: IPaginationOptions
 ) => {
   // All Query Data
-  const { searchTerm, ...filteredData } = query;
-
+  const { searchTerm, specialties, ...filteredData } = query;
   // Pagination Data
   const { page, limit, skip } = PaginationHelper.calculatePagination(options);
 
@@ -35,6 +34,21 @@ const getAllDoctorFromDB = async (
     isDeleted: false,
   });
 
+  // specialties Filter
+  if (specialties && specialties.length > 0) {
+    andCondition.push({
+      doctorSpecialties: {
+        some: {
+          specialties: {
+            title: {
+              contains: specialties,
+              mode: "insensitive",
+            },
+          },
+        },
+      },
+    });
+  }
   // Filter Data
   if (Object.keys(filteredData)?.length > 0) {
     andCondition.push({
@@ -63,6 +77,13 @@ const getAllDoctorFromDB = async (
         : {
             createdAt: "asc",
           },
+    include: {
+      doctorSpecialties: {
+        include: {
+          specialties: true,
+        },
+      },
+    },
   });
 
   //  Total Data
