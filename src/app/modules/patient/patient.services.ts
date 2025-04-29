@@ -166,9 +166,60 @@ const softDeleteSinglePatientFromDB = async (id: string): Promise<Patient> => {
   return result;
 };
 
+// Update Patient Data
+const updatePatientData = async (id: string, payload: any) => {
+  const { medicalReport, patientHealthData, ...patientInfo } = payload;
+
+  const patientData = await prisma.patient.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
+
+  //  Patient Data Create or Update
+  const result = await prisma.$transaction(async (transactionClient) => {
+    //  Update Patient Data
+    const updatedPatient = await transactionClient.patient.update({
+      where: {
+        id: id,
+      },
+      data: patientInfo,
+    });
+    //  Create or Update Patient Health Data
+    if (patientHealthData) {
+      await transactionClient.patientHealthData.upsert({
+        where: {
+          patientId: updatedPatient.id,
+        },
+        update: patientHealthData,
+        create: { ...patientHealthData, patientId: updatedPatient.id },
+      });
+    }
+    //  Create  Patient Report Data
+    if (medicalReport) {
+      await transactionClient.medicalReport.create({
+        data: { ...medicalReport, patientId: updatedPatient.id },
+      });
+    }
+  });
+
+  const response = await prisma.patient.findUnique({
+    where: {
+      id: id,
+    },
+    include: {
+      medicalReports: true,
+      patientHealthData: true,
+    },
+  });
+
+  return response;
+};
+
 export const PatientServices = {
   getAllPatientsFromDB,
   findSinglePatientsFromDB,
   deleteSinglePatient,
   softDeleteSinglePatientFromDB,
+  updatePatientData,
 };

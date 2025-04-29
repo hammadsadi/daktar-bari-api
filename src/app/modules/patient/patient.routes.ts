@@ -32,4 +32,10 @@ patientRouter.delete(
   PatientsControllers.softDeletePatientData
 );
 
+// Update Single Patient Data
+patientRouter.patch(
+  "/:patientId",
+  // auth(UserRole.SUPER_ADMIN),
+  PatientsControllers.updatePatientData
+);
 export const PatientsRoutes = patientRouter;
