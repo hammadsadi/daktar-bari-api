@@ -21,6 +21,7 @@ const createSchedule = catchAsync(
   }
 );
 
+// Export Schedule Controller
 export const ScheduleControllers = {
   createSchedule,
 };
