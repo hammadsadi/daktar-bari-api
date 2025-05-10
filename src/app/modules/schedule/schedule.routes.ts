@@ -15,5 +15,12 @@ scheduleRouter.post(
   ScheduleControllers.createSchedule
 );
 
+// Create Schedule
+scheduleRouter.get(
+  "/",
+  auth(UserRole.DOCTOR),
+  ScheduleControllers.getAllSchedule
+);
+
 // Export Routes
 export const ScheduleRoutes = scheduleRouter;

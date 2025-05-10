@@ -3,6 +3,8 @@ import catchAsync from "../../shared/catchAsync";
 import sendResponse from "../../shared/SendResponse";
 import { ScheduleService } from "./schedule.services";
 import status from "http-status";
+import pick from "../../utils/pick";
+import { TAuthUser } from "../../interfaces/common";
 
 /**
  * @Method POST
@@ -21,7 +23,34 @@ const createSchedule = catchAsync(
   }
 );
 
+/**
+ * @Method GET
+ * @Dsc GET All Schedule
+ * @Return Data
+ */
+const getAllSchedule = catchAsync(
+  async (
+    req: Request & { user?: TAuthUser },
+    res: Response,
+    next: NextFunction
+  ) => {
+    const filter = pick(req.query, ["startDate", "endDate"]);
+    const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
+    const result = await ScheduleService.getScheduleList(
+      filter,
+      options,
+      req.user as TAuthUser
+    );
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "Schedule Retrieved Successful!",
+      data: result,
+    });
+  }
+);
 // Export Schedule Controller
 export const ScheduleControllers = {
   createSchedule,
+  getAllSchedule,
 };

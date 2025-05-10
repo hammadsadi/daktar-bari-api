@@ -5,9 +5,14 @@ import { Secret } from "jsonwebtoken";
 import { UserStatus } from "@prisma/client";
 import ApiError from "../errors/ApiError";
 import status from "http-status";
+import { TAuthUser } from "../interfaces/common";
 
 const auth = (...roles: string[]) => {
-  return (req: Request & { user?: any }, res: Response, next: NextFunction) => {
+  return (
+    req: Request & { user?: TAuthUser },
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const token = req.headers.authorization;
 
@@ -32,7 +37,7 @@ const auth = (...roles: string[]) => {
       if (roles.length && !roles.includes(verifyUser.role)) {
         throw new ApiError(status.FORBIDDEN, "Forbidden!");
       }
-      req.user = verifyUser;
+      req.user = verifyUser as TAuthUser;
       next();
     } catch (error) {
       next(error);
