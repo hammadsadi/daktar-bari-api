@@ -15,5 +15,11 @@ doctorScheduleRouter.post(
   DoctorScheduleControllers.createDoctorSchedule
 );
 
+// Get My Schedule
+doctorScheduleRouter.get(
+  "/my-schedule",
+  auth(UserRole.DOCTOR),
+  DoctorScheduleControllers.getAllMySchedule
+);
 // Export Routes
 export const DoctorScheduleRoutes = doctorScheduleRouter;
