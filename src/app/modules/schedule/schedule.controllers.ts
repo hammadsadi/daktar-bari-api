@@ -49,8 +49,55 @@ const getAllSchedule = catchAsync(
     });
   }
 );
+
+/**
+ * @Method GET
+ * @Dsc GET Single Schedule
+ * @Return Data
+ */
+const getSingleSchedule = catchAsync(
+  async (
+    req: Request & { user?: TAuthUser },
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { scheduleId } = req.params;
+    const result = await ScheduleService.getSingleScheduleFromDB(scheduleId);
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "Single Schedule Retrieved Successful!",
+      data: result,
+    });
+  }
+);
+
+/**
+ * @Method DELETE
+ * @Dsc DELETE Single Schedule
+ * @Return Data
+ */
+const deleteSingleSchedule = catchAsync(
+  async (
+    req: Request & { user?: TAuthUser },
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { scheduleId } = req.params;
+    const result = await ScheduleService.deleteSingleScheduleFromDB(scheduleId);
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "Single Schedule Deleted Successful!",
+      data: result,
+    });
+  }
+);
+
 // Export Schedule Controller
 export const ScheduleControllers = {
   createSchedule,
   getAllSchedule,
+  getSingleSchedule,
+  deleteSingleSchedule,
 };

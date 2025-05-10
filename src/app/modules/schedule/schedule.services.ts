@@ -165,7 +165,34 @@ const getScheduleList = async (
     result,
   };
 };
+
+// Get Single Schedule from DB
+const getSingleScheduleFromDB = async (id: string) => {
+  const singleSchedule = await prisma.schedule.findUniqueOrThrow({
+    where: {
+      id: id,
+    },
+    include: {
+      doctorSchedules: true,
+    },
+  });
+
+  return singleSchedule;
+};
+
+// Delete Single Schedule from DB
+const deleteSingleScheduleFromDB = async (id: string) => {
+  const singleScheduleDeleted = await prisma.schedule.delete({
+    where: {
+      id: id,
+    },
+  });
+
+  return singleScheduleDeleted;
+};
 export const ScheduleService = {
   scheduleSaveToDB,
   getScheduleList,
+  getSingleScheduleFromDB,
+  deleteSingleScheduleFromDB,
 };

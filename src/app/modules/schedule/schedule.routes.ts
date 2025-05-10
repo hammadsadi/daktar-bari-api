@@ -22,5 +22,19 @@ scheduleRouter.get(
   ScheduleControllers.getAllSchedule
 );
 
+//  Get Single Schedule
+scheduleRouter.get(
+  "/:scheduleId",
+  auth(UserRole.DOCTOR, UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  ScheduleControllers.getSingleSchedule
+);
+
+//  Delete Single Schedule
+scheduleRouter.delete(
+  "/:scheduleId",
+  auth(UserRole.DOCTOR, UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  ScheduleControllers.deleteSingleSchedule
+);
+
 // Export Routes
 export const ScheduleRoutes = scheduleRouter;
