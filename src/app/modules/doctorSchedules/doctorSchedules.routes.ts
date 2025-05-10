@@ -21,5 +21,11 @@ doctorScheduleRouter.get(
   auth(UserRole.DOCTOR),
   DoctorScheduleControllers.getAllMySchedule
 );
+// Delete My Single Schedule
+doctorScheduleRouter.delete(
+  "/:scheduleId",
+  auth(UserRole.DOCTOR),
+  DoctorScheduleControllers.deleteMySingleSchedule
+);
 // Export Routes
 export const DoctorScheduleRoutes = doctorScheduleRouter;

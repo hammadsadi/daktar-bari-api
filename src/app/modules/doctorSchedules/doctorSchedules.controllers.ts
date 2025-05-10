@@ -57,8 +57,35 @@ const getAllMySchedule = catchAsync(
   }
 );
 
+/**
+ * @Method Delete
+ * @Dsc Delete My Single Schedule
+ * @Return Data
+ */
+const deleteMySingleSchedule = catchAsync(
+  async (
+    req: Request & { user?: TAuthUser },
+    res: Response,
+    next: NextFunction
+  ) => {
+    const { scheduleId } = req.params;
+    const result =
+      await DoctorScheduleServices.deleteSingleDoctorScheduleFromDB(
+        req.user as TAuthUser,
+        scheduleId
+      );
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "My Schedule Retrieved Successful!",
+      data: result,
+    });
+  }
+);
+
 // Export Schedule Controller
 export const DoctorScheduleControllers = {
   createDoctorSchedule,
   getAllMySchedule,
+  deleteMySingleSchedule,
 };
