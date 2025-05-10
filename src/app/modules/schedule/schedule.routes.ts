@@ -6,7 +6,7 @@ import { ScheduleControllers } from "./schedule.controllers";
 // Init Route
 const scheduleRouter = Router();
 
-// Get All Users
+// Create Schedule
 scheduleRouter.post("/create", ScheduleControllers.createSchedule);
 
 // Export Routes
