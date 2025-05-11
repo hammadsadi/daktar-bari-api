@@ -57,6 +57,32 @@ const appointmentSaveToDB = async (
         appointmentId: appointmentData.id,
       },
     });
+
+    // Generate Transaction ID
+    const today = new Date();
+    const transactionId =
+      "Daktar-bari" +
+      "-" +
+      today.getFullYear() +
+      "-" +
+      today.getMonth() +
+      "-" +
+      today.getDate() +
+      "-" +
+      today.getHours() +
+      "-" +
+      today.getMinutes() +
+      "-" +
+      today.getSeconds();
+    //  Create Payment Data
+    await transactionClient.payment.create({
+      data: {
+        amount: doctorInfo?.appointmentFee,
+        appointmentId: appointmentData.id,
+        transactionId,
+      },
+    });
+
     return appointmentData;
   });
   return result;
