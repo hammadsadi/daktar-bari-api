@@ -169,7 +169,8 @@ model DoctorSchedules {
   scheduleId String
   schedule Schedule @relation(fields: [scheduleId], references: [id])
   isBooked Boolean @default(false)
-  appointmentId String?
+  appointmentId String? @unique
+  appointment Appointment?  @relation(fields: [appointmentId], references: [id])
 
   @@id([doctorId, scheduleId])
 }
@@ -186,6 +187,7 @@ schedule Schedule @relation(fields: [scheduleId], references: [id])
 videoCallingId String
 status AppointmentStatus @default(SCHEDULED)
 paymentStatus PaymentStatus @default(UNPAID)
+doctorSchedules DoctorSchedules?
 createdAt DateTime @default(now())
 updatedAt DateTime @updatedAt
 }
