@@ -21,6 +21,12 @@ doctorScheduleRouter.get(
   auth(UserRole.DOCTOR),
   DoctorScheduleControllers.getAllMySchedule
 );
+// Get All Schedule
+doctorScheduleRouter.get(
+  "/all-schedule",
+  auth(UserRole.DOCTOR, UserRole.ADMIN, UserRole.SUPER_ADMIN),
+  DoctorScheduleControllers.getAllSchedule
+);
 // Delete My Single Schedule
 doctorScheduleRouter.delete(
   "/:scheduleId",

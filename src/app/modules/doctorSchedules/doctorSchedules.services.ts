@@ -29,13 +29,10 @@ const doctorScheduleSaveToDB = async (
 
   return result;
 };
-// Get My Schedule List
 
-const getMyScheduleList = async (
-  query: any,
-  options: IPaginationOptions,
-  user: TAuthUser
-) => {
+// Get All Schedule List
+
+const getAllScheduleList = async (query: any, options: IPaginationOptions) => {
   // All Query Data
   const { endDate, startDate, ...filteredData } = query;
 
@@ -120,6 +117,111 @@ const getMyScheduleList = async (
   };
 };
 
+// Get My Schedule List
+
+const getMyScheduleList = async (
+  query: any,
+  options: IPaginationOptions,
+  user: TAuthUser
+) => {
+  // All Query Data
+  const { endDate, startDate, ...filteredData } = query;
+
+  // Pagination Data
+  const { page, limit, skip } = PaginationHelper.calculatePagination(options);
+
+  //  Schedule SearchTerm data
+  const andCondition: Prisma.DoctorSchedulesWhereInput[] = [];
+
+  //  Find User
+  const userInfo = await prisma.doctor.findUnique({
+    where: {
+      email: user?.email,
+    },
+  });
+  console.log(userInfo);
+  //  Push Doctor Id
+  andCondition.push({
+    doctorId: userInfo?.id,
+  });
+
+  //  Push Filter Data
+  if (startDate && endDate) {
+    andCondition.push({
+      AND: [
+        {
+          schedule: {
+            startDateTime: {
+              gte: startDate,
+            },
+          },
+        },
+        {
+          schedule: {
+            endDateTime: {
+              lte: endDate,
+            },
+          },
+        },
+      ],
+    });
+  }
+
+  // Filter Data
+  if (Object.keys(filteredData)?.length > 0) {
+    if (
+      typeof filteredData.isBooked === "string" &&
+      filteredData.isBooked === "true"
+    ) {
+      filteredData.isBooked = true;
+    } else if (
+      typeof filteredData.isBooked === "string" &&
+      filteredData.isBooked === "false"
+    ) {
+      filteredData.isBooked = false;
+    }
+    andCondition.push({
+      AND: Object.keys(filteredData)?.map((key) => ({
+        [key]: {
+          equals: (filteredData as any)[key],
+        },
+      })),
+    });
+  }
+
+  // Make Object Data  Using ANT Operator
+  const whereCondition: Prisma.DoctorSchedulesWhereInput = {
+    AND: andCondition,
+  };
+
+  // Get Patient Info
+  const result = await prisma.doctorSchedules.findMany({
+    // Search Patient By Name or Email
+    where: whereCondition,
+    skip,
+    take: limit,
+    orderBy:
+      options?.sortBy && options?.sortOrder
+        ? {
+            [options?.sortBy]: options?.sortOrder,
+          }
+        : {},
+  });
+
+  //  Total Data
+  const total = await prisma.doctorSchedules.count({
+    where: whereCondition,
+  });
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    result,
+  };
+};
+
 //  Delete Doctor Schedule from DB
 const deleteSingleDoctorScheduleFromDB = async (
   user: TAuthUser,
@@ -162,4 +264,5 @@ export const DoctorScheduleServices = {
   doctorScheduleSaveToDB,
   getMyScheduleList,
   deleteSingleDoctorScheduleFromDB,
+  getAllScheduleList,
 };

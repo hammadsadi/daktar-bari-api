@@ -58,6 +58,32 @@ const getAllMySchedule = catchAsync(
 );
 
 /**
+ * @Method GET
+ * @Dsc GET All  Schedule
+ * @Return Data
+ */
+const getAllSchedule = catchAsync(
+  async (
+    req: Request & { user?: TAuthUser },
+    res: Response,
+    next: NextFunction
+  ) => {
+    const filter = pick(req.query, ["startDate", "endDate", "isBooked"]);
+    const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
+    const result = await DoctorScheduleServices.getAllScheduleList(
+      filter,
+      options
+    );
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "All Schedule Retrieved Successful!",
+      data: result,
+    });
+  }
+);
+
+/**
  * @Method Delete
  * @Dsc Delete My Single Schedule
  * @Return Data
@@ -88,4 +114,5 @@ export const DoctorScheduleControllers = {
   createDoctorSchedule,
   getAllMySchedule,
   deleteMySingleSchedule,
+  getAllSchedule,
 };

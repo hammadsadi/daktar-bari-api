@@ -73,6 +73,7 @@ model Doctor {
   user User @relation(fields: [email], references: [email])
   doctorSpecialties DoctorSpecialties[]
   doctorSchedules DoctorSchedules[]
+  appointment Appointment[]
 }
 
 
@@ -108,6 +109,7 @@ model Patient{
   user User @relation(fields: [email], references: [email])
   patientHealthData PatientHealthData?
   medicalReports MedicalReport[]
+  appointment Appointment[]
   @@map("patients")
 
 }
@@ -158,6 +160,7 @@ model Schedule {
   updatedAt DateTime @updatedAt
 
   doctorSchedules DoctorSchedules[]
+  appointment Appointment?
 }
 //  DoctorSchedules Model
 model DoctorSchedules {
@@ -170,6 +173,23 @@ model DoctorSchedules {
 
   @@id([doctorId, scheduleId])
 }
+
+//  Appointment Model
+model Appointment {
+id String @id @default(uuid())
+patientId String
+patient Patient @relation(fields: [patientId], references: [id])
+doctorId String
+doctor Doctor @relation(fields: [doctorId], references: [id])
+scheduleId String @unique
+schedule Schedule @relation(fields: [scheduleId], references: [id])
+videoCallingId String
+status AppointmentStatus @default(SCHEDULED)
+paymentStatus PaymentStatus @default(UNPAID)
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+}
+
 //  === Enums Here ===
 enum UserRole {
   SUPER_ADMIN
@@ -203,4 +223,15 @@ enum BloodGroup {
 enum MaritalStatus {
   MARRIED
   UNMARRIED
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+INPROGRESS
+COMPLETED
+CANCELED
+}
+enum PaymentStatus {
+  PAID
+UNPAID
 }
