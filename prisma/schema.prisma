@@ -74,6 +74,8 @@ model Doctor {
   doctorSpecialties DoctorSpecialties[]
   doctorSchedules DoctorSchedules[]
   appointment Appointment[]
+  prescription Prescription[]
+  review Review[]
 }
 
 
@@ -110,6 +112,9 @@ model Patient{
   patientHealthData PatientHealthData?
   medicalReports MedicalReport[]
   appointment Appointment[]
+  prescription Prescription[]
+  review Review[]
+
   @@map("patients")
 
 }
@@ -190,6 +195,9 @@ paymentStatus PaymentStatus @default(UNPAID)
 doctorSchedules DoctorSchedules?
 createdAt DateTime @default(now())
 updatedAt DateTime @updatedAt
+
+prescription Prescription?
+review Review?
 }
 
 model Payment{
@@ -199,6 +207,37 @@ amount Float
 transactionId String
 status PaymentStatus @default(UNPAID)
 paymentGatewayData Json?
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+}
+
+
+//  Prescription Model
+model Prescription{
+id String @id @default(uuid())
+appointmentId String @unique
+appointment Appointment @relation(fields: [appointmentId], references: [id])
+doctorId String
+doctor Doctor @relation(fields: [doctorId], references: [id])
+patientId String
+patient Patient @relation(fields: [patientId], references: [id])
+instructions String
+followUpDate DateTime?
+createdAt DateTime @default(now())
+updatedAt DateTime @updatedAt
+}
+
+// Review Model
+model Review {
+id String @id @default(uuid())
+patientId String
+patient Patient @relation(fields: [patientId], references: [id])
+doctorId String
+doctor Doctor @relation(fields: [doctorId], references: [id])
+appointmentId String @unique
+appointment Appointment @relation(fields: [appointmentId], references: [id])
+rating Float
+comment String
 createdAt DateTime @default(now())
 updatedAt DateTime @updatedAt
 }
