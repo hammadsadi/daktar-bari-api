@@ -5,18 +5,10 @@ import { PatientsControllers } from "./patient.controllers";
 const patientRouter = Router();
 
 // Get All Patients
-patientRouter.get(
-  "/",
-  //   auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
-  PatientsControllers.getAllPatients
-);
+patientRouter.get("/", PatientsControllers.getAllPatients);
 
 // Get Single Patient
-patientRouter.get(
-  "/:patientId",
-  // auth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
-  PatientsControllers.getSinglePatient
-);
+patientRouter.get("/:patientId", PatientsControllers.getSinglePatient);
 
 // Delete Single Patient Data
 patientRouter.delete(
