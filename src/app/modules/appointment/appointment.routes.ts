@@ -7,7 +7,14 @@ import { AppointmentControllers } from "./appointment.controllers";
 // Init Route
 const appointmentRouter = Router();
 
-// Appoint Booked
+// My Appointment Get Route
+appointmentRouter.get(
+  "/get-my-appointments",
+  auth(UserRole.PATIENT, UserRole.DOCTOR),
+  AppointmentControllers.getMyAppointments
+);
+
+// Appointment Booked Route
 appointmentRouter.post(
   "/booked",
   auth(UserRole.PATIENT),

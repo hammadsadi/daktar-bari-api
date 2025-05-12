@@ -4,6 +4,7 @@ import status from "http-status";
 import catchAsync from "../../shared/catchAsync";
 import { AppointmentServices } from "./appointment.services";
 import { TAuthUser } from "../../interfaces/common";
+import pick from "../../utils/pick";
 
 /**
  * @Method GET
@@ -26,6 +27,32 @@ const appointBooked = catchAsync(
   }
 );
 
+/**
+ * @Method GET
+ * @Dsc GET ALL My Appointments
+ * @Return Data
+ */
+
+const getMyAppointments = catchAsync(
+  async (req: Request & { user?: TAuthUser }, res: Response) => {
+    // Select Valid Key and Value
+    const filter = pick(req.query, ["status", "paymentStatus"]);
+    const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
+    const result = await AppointmentServices.getMyAppointmentsFromDB(
+      req.user as TAuthUser,
+      filter,
+      options
+    );
+    sendResponse(res, {
+      statusCode: status.OK,
+      success: true,
+      message: "My Appointment Retrieved Successful",
+      data: result,
+    });
+  }
+);
+
 export const AppointmentControllers = {
   appointBooked,
+  getMyAppointments,
 };

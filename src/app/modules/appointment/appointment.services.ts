@@ -1,6 +1,9 @@
 import { TAuthUser } from "../../interfaces/common";
+import { IPaginationOptions } from "../../interfaces/paginationOptions";
 import prisma from "../../shared/prisma";
 import { v4 as uuidv4 } from "uuid";
+import { PaginationHelper } from "../../utils/paginationHelper";
+import { Prisma, UserRole } from "@prisma/client";
 
 //  Appointment Save to DB
 const appointmentSaveToDB = async (
@@ -73,7 +76,9 @@ const appointmentSaveToDB = async (
       "-" +
       today.getMinutes() +
       "-" +
-      today.getSeconds();
+      today.getSeconds() +
+      "-" +
+      Math.ceil(Math.random()) * 100000;
     //  Create Payment Data
     await transactionClient.payment.create({
       data: {
@@ -88,6 +93,93 @@ const appointmentSaveToDB = async (
   return result;
 };
 
+//  Get My  Appointment
+const getMyAppointmentsFromDB = async (
+  authInfo: TAuthUser,
+  query: any,
+  options: IPaginationOptions
+) => {
+  // All Query Data
+  const { ...filteredData } = query;
+  // Pagination Data
+  const { page, limit, skip } = PaginationHelper.calculatePagination(options);
+
+  //  Doctor SearchTerm data
+  const andCondition: Prisma.AppointmentWhereInput[] = [];
+
+  //  Add Patient and Doctor Info Condition
+  if (authInfo?.role === UserRole.PATIENT) {
+    andCondition.push({
+      patient: {
+        email: authInfo?.email,
+      },
+    });
+  } else if (authInfo?.role === UserRole.DOCTOR) {
+    andCondition.push({
+      doctor: {
+        email: authInfo?.email,
+      },
+    });
+  }
+
+  // Filter Data
+  if (Object.keys(filteredData)?.length > 0) {
+    andCondition.push({
+      AND: Object.keys(filteredData)?.map((key) => ({
+        [key]: {
+          equals: (filteredData as any)[key],
+        },
+      })),
+    });
+  }
+  // Make Object Data  Using ANT Operator
+  const whereCondition: Prisma.AppointmentWhereInput = { AND: andCondition };
+
+  // Get Doctor Info
+  const result = await prisma.appointment.findMany({
+    // Search Doctor By Name or Email
+    where: whereCondition,
+    skip,
+    take: limit,
+    orderBy:
+      options?.sortBy && options?.sortOrder
+        ? {
+            [options?.sortBy]: options?.sortOrder,
+          }
+        : {
+            createdAt: "asc",
+          },
+    include:
+      authInfo?.role === UserRole.DOCTOR
+        ? {
+            patient: {
+              include: {
+                medicalReports: true,
+                patientHealthData: true,
+              },
+            },
+            schedule: true,
+          }
+        : {
+            doctor: true,
+            schedule: true,
+          },
+  });
+
+  //  Total Data
+  const total = await prisma.appointment.count({
+    where: whereCondition,
+  });
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    result,
+  };
+};
 export const AppointmentServices = {
   appointmentSaveToDB,
+  getMyAppointmentsFromDB,
 };
