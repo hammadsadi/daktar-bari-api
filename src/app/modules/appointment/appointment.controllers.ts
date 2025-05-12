@@ -52,7 +52,30 @@ const getMyAppointments = catchAsync(
   }
 );
 
+/**
+ * @Method GET
+ * @Dsc GET ALL  Appointments
+ * @Return Data
+ */
+
+const getAllAppointments = catchAsync(async (req: Request, res: Response) => {
+  // Select Valid Key and Value
+  const filter = pick(req.query, ["status", "paymentStatus"]);
+  const options = pick(req.query, ["page", "limit", "sortBy", "sortOrder"]);
+  const result = await AppointmentServices.getAllAppointmentsFromDB(
+    filter,
+    options
+  );
+  sendResponse(res, {
+    statusCode: status.OK,
+    success: true,
+    message: "Appointment Retrieved Successful",
+    data: result,
+  });
+});
+
 export const AppointmentControllers = {
   appointBooked,
   getMyAppointments,
+  getAllAppointments,
 };

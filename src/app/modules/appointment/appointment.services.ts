@@ -179,7 +179,69 @@ const getMyAppointmentsFromDB = async (
     result,
   };
 };
+
+const getAllAppointmentsFromDB = async (
+  query: any,
+  options: IPaginationOptions
+) => {
+  // All Query Data
+  const { ...filteredData } = query;
+  // Pagination Data
+  const { page, limit, skip } = PaginationHelper.calculatePagination(options);
+
+  //  Doctor SearchTerm data
+  const andCondition: Prisma.AppointmentWhereInput[] = [];
+
+  // Filter Data
+  if (Object.keys(filteredData)?.length > 0) {
+    andCondition.push({
+      AND: Object.keys(filteredData)?.map((key) => ({
+        [key]: {
+          equals: (filteredData as any)[key],
+        },
+      })),
+    });
+  }
+  // Make Object Data  Using ANT Operator
+  const whereCondition: Prisma.AppointmentWhereInput = { AND: andCondition };
+
+  // Get Doctor Info
+  const result = await prisma.appointment.findMany({
+    // Search Doctor By Name or Email
+    where: whereCondition,
+    skip,
+    take: limit,
+    orderBy:
+      options?.sortBy && options?.sortOrder
+        ? {
+            [options?.sortBy]: options?.sortOrder,
+          }
+        : {
+            createdAt: "asc",
+          },
+    include: {
+      doctor: true,
+      patient: true,
+      schedule: true,
+      doctorSchedules: true,
+    },
+  });
+
+  //  Total Data
+  const total = await prisma.appointment.count({
+    where: whereCondition,
+  });
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    result,
+  };
+};
 export const AppointmentServices = {
   appointmentSaveToDB,
   getMyAppointmentsFromDB,
+  getAllAppointmentsFromDB,
 };

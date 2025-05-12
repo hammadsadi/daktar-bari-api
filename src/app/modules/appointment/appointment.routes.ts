@@ -14,6 +14,13 @@ appointmentRouter.get(
   AppointmentControllers.getMyAppointments
 );
 
+// All Appointment Get Route
+appointmentRouter.get(
+  "/get-all-appointments",
+  auth(UserRole.ADMIN),
+  AppointmentControllers.getAllAppointments
+);
+
 // Appointment Booked Route
 appointmentRouter.post(
   "/booked",
