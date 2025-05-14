@@ -21,4 +21,12 @@ export default {
     APP_PASS: process.env.APP_PASS,
     EMAIL: process.env.EMAIL,
   },
+  SSLCOMMERZ: {
+    STORE_ID: process.env.STORE_ID,
+    STORE_PASSWD: process.env.STORE_PASSWD,
+    SUCCESS_URL: process.env.SUCCESS_URL,
+    FAIL_URL: process.env.FAIL_URL,
+    CANCEL_URL: process.env.CANCEL_URL,
+    SSL_COMMERZ_API: process.env.SSL_COMMERZ_API,
+  },
 };
