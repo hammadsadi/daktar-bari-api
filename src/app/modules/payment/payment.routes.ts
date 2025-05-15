@@ -8,7 +8,10 @@ import { PaymentControllers } from "./payment.controllers";
 const paymentRouter = Router();
 
 // Init payment
-paymentRouter.post("/payment-init", PaymentControllers.paymentInit);
+paymentRouter.post(
+  "/payment-init/:appointmentId",
+  PaymentControllers.paymentInit
+);
 
 // Export Routes
 export const PaymentRoutes = paymentRouter;

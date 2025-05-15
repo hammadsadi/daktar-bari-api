@@ -28,5 +28,6 @@ export default {
     FAIL_URL: process.env.FAIL_URL,
     CANCEL_URL: process.env.CANCEL_URL,
     SSL_COMMERZ_API: process.env.SSL_COMMERZ_API,
+    SSL_COMMERZ_VALIDATION_API: process.env.SSL_COMMERZ_VALIDATION_API,
   },
 };

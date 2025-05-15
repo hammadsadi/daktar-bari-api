@@ -197,12 +197,14 @@ createdAt DateTime @default(now())
 updatedAt DateTime @updatedAt
 
 prescription Prescription?
+payment Payment?
 review Review?
 }
 
 model Payment{
 id String @id @default(uuid())
-appointmentId String
+appointmentId String @unique
+appointment Appointment @relation(fields: [appointmentId], references: [id])
 amount Float
 transactionId String
 status PaymentStatus @default(UNPAID)

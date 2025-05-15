@@ -11,7 +11,8 @@ import status from "http-status";
  */
 const paymentInit = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await PaymentServices.initPayment();
+    const { appointmentId } = req.params;
+    const result = await PaymentServices.initPayment(appointmentId);
     sendResponse(res, {
       statusCode: status.OK,
       success: true,
