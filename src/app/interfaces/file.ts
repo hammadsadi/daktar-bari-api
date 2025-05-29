@@ -1,3 +1,4 @@
+// Cloudinary response interface
 export interface ICloudinaryResponse {
   asset_id: string;
   public_id: string;
@@ -20,7 +21,7 @@ export interface ICloudinaryResponse {
   existing: boolean;
   api_key: string;
 }
-
+// File interface
 export interface IFile {
   fieldname: string;
   originalname: string;
